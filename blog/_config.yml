@@ -87,7 +87,7 @@ deploy:
   branch: master
 
 # Disqus
-#disqus_shortname: scnace
+disqus_shortname: scnace
 
 # Duoshuo
-duoshuo_shortname: scnace
+# duoshuo_shortname: scnace
