@@ -89,7 +89,9 @@ func enlargeString(foo string,boo string)string{
     }(foo)
   }
 ```
+
 * 关于反射的一些知识
+
 反射是在Runtime层读取对象的内存信息与类型;但是由于没有对象的头指针,无法做到靠其自身来解析对象的类型。依靠`interface{}`来实现反射,`i interface{}`可以保存参数的**类型**和**数据**
 
 > 这里的`interface{}`只是对象的一个复制,并且是不可寻址的,所以,要改变对象的信息只能传入指向此对象的指针
@@ -124,3 +126,35 @@ reflect.Value(&a) //canset:true canaddress:true
     }
   }
 ```
+
+* 在Golang中使用Set
+
+首先,Golang中是没有`built-in`的`set`关键字的。所以,要实现类似`set`的数据结构,需要使用`map`和`key`来组合成一个`set`。
+
+> 这里的set更多的指的是一个FIFO的map也就是一个ordered-map。
+
+比如,我们现在有一个map:
+```go
+foo:=make(map[string]string)
+foo["go"]="go"
+foo["js"]="js"
+foo["php"]="php"
+```
+然后,我们发现遍历这个map的时候,key的顺序有可能是会被更换的:
+
+```go
+for key,value:=range foo{
+  //key,value的值并不唯一
+  println(key,value)
+}
+```
+这是为什么呢?其实仔细想一想就知道,我们为什么要指望`map`来向`set`一样来工作呢?这本来就是两个数据结构啊！所以,我们要的是什么？在这种场景下,我们需要的只是**key按一定顺序排列的map中对应的值**，经过这层思考之后,就可以很快的得出代码：
+```go
+  //按你想要的顺序遍历map吧..
+  keys:=[]string{"go","js","php"}
+  for _,key:=range keys{
+    println(key，foo[key])
+  }
+```
+再反过来想想 我们为什么希望map按照FIFO顺序来呢?终究是对map的理解出现了误解。
+这时候静下来 好好读读[Go blog](https://blog.golang.org/go-maps-in-action)的说明,就会有豁然开朗的感觉了吧：）
